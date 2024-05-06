@@ -10,6 +10,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import convertNameToInitials from '$lib/_helpers/convertNameToInitials';
+	import logo from '$lib/image/favicon.svg';
 
 	export let user: any;
 	$: currentPage = $page.url.pathname;
@@ -31,26 +32,27 @@
 	}
 </script>
 
-<header class="bg-background sticky top-0 z-40 w-full border-b">
-	<div class="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
+<header class="bg-background sticky top-0 z-40 w-full border-b ">
+	<div class="container flex h-24 items-center space-x-4 sm:justify-between sm:space-x-0">
 		<div class="flex gap-6 md:gap-10">
-			<a class="flex items-center space-x-2" href="/"
-				><Logo size="24"></Logo><span class="inline-block font-bold">{APP_NAME}</span></a
+			<a class="flex items-center space-x-2 text-3xl" href="/"
+				><img src={logo} alt="logo" class="h-10 w-10"/><span class="inline-block font-semibold">{APP_NAME}</span></a
 			>
+			
+		</div>
+		<div class="flex flex-1 items-center justify-end space-x-4">
 			<nav class="flex gap-6">
 				<a
 					class="flex items-center text-sm font-medium text-muted-foreground"
-					href="/"
-					class:active={'/' === currentPage}>Home</a
+					href="/template"
+					class:active={'/template' === currentPage}>Template</a
 				>
 				<a
-					class="flex items-center text-sm font-medium text-muted-foreground"
-					href="/dashboard"
-					class:active={'/dashboard' === currentPage}>Protected</a
+				class="flex items-center text-sm font-medium text-muted-foreground"
+				href="/app/dashboard"
+					class:active={'/app/dashboard' === currentPage}>Dashboard</a
 				>
 			</nav>
-		</div>
-		<div class="flex flex-1 items-center justify-end space-x-4">
 			<nav class="flex items-center space-x-1">
 				{#if !user}
 					<Button on:click={() => goto('/auth/sign-in')}>Sign in</Button>

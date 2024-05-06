@@ -22,7 +22,6 @@
 	export let form: SuperValidated<SignUpSchema>;
 </script>
 
-<!--<Button on:click={() => goto('/auth/oauth/google')}>Sign up with Google</Button>-->
 <div class="flex items-center justify-center mx-auto max-w-2xl">
 	<Form.Root let:submitting let:errors method="POST" {form} schema={signUpSchema} let:config>
 		<Card.Root>
@@ -86,12 +85,16 @@
 					</Form.Item>
 				</Form.Field>
 			</Card.Content>
-			<Card.Footer>
+			<Card.Footer class="flex flex-col gap-y-2">
 				<Form.Button class="w-full" disabled={submitting}
 					>{#if submitting}
 						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 						Please wait{:else}Sign Up{/if}
 				</Form.Button>
+				<Button
+					on:click={() => goto('/auth/oauth/google')}
+					class="flex items-center justify-center mx-auto w-full">Sign up with Google</Button
+				>
 			</Card.Footer>
 		</Card.Root>
 	</Form.Root>

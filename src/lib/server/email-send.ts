@@ -1,90 +1,30 @@
-import nodemailer from 'nodemailer';
-import * as aws from '@aws-sdk/client-ses';
-import {
-	FROM_EMAIL,
-	AWS_ACCESS_KEY_ID,
-	AWS_SECRET_ACCESS_KEY,
-	AWS_REGION,
-	AWS_API_VERSION
-} from '$env/static/private';
-//import { z } from "zod";
+import sgMail from '@sendgrid/mail';
+import { SENDGRID_API_KEY, FROM_EMAIL } from '$env/static/private';
+
 export default async function sendEmail(
-	email: string,
-	subject: string,
-	bodyHtml?: string,
-	bodyText?: string
+  email,
+  subject,
+  bodyHtml,
+  bodyText
 ) {
-	const hasAccessKeys = AWS_ACCESS_KEY_ID && AWS_SECRET_ACCESS_KEY;
+  sgMail.setApiKey(SENDGRID_API_KEY);
 
-	const ses = new aws.SES({
-		apiVersion: AWS_API_VERSION,
-		region: AWS_REGION,
-		...(hasAccessKeys
-			? {
-					credentials: {
-						accessKeyId: AWS_ACCESS_KEY_ID || '',
-						secretAccessKey: AWS_SECRET_ACCESS_KEY || ''
-					}
-				}
-			: {})
-	});
+  const msg = {
+    to: email,
+    from: FROM_EMAIL, // Replace this with your SendGrid verified sender
+    subject: subject,
+    text: bodyText,
+    html: bodyHtml,
+  };
 
-	// create Nodemailer SES transporter
-	const transporter = nodemailer.createTransport({
-		SES: { ses, aws }
-	});
-
-	try {
-		if (!bodyText) {
-			transporter.sendMail(
-				{
-					from: FROM_EMAIL,
-					to: email,
-					subject: subject,
-					html: bodyHtml
-				},
-				(err) => {
-					if (err) {
-						throw new Error(`Error sending email: ${JSON.stringify(err)}`);
-					}
-				}
-			);
-		} else if (!bodyHtml) {
-			transporter.sendMail(
-				{
-					from: FROM_EMAIL,
-					to: email,
-					subject: subject,
-					text: bodyText
-				},
-				(err) => {
-					if (err) {
-						throw new Error(`Error sending email: ${JSON.stringify(err)}`);
-					}
-				}
-			);
-		} else {
-			transporter.sendMail(
-				{
-					from: FROM_EMAIL,
-					to: email,
-					subject: subject,
-					html: bodyHtml,
-					text: bodyText
-				},
-				(err) => {
-					if (err) {
-						throw new Error(`Error sending email: ${JSON.stringify(err)}`);
-					}
-				}
-			);
-		}
-		console.log('E-mail sent successfully!');
-		return {
-			statusCode: 200,
-			message: 'E-mail sent successfully.'
-		};
-	} catch (error) {
-		throw new Error(`Error sending email: ${JSON.stringify(error)}`);
-	}
+  try {
+    await sgMail.send(msg);
+    console.log('Email sent successfully!');
+    return {
+      statusCode: 200,
+      message: 'Email sent successfully.',
+    };
+  } catch (error) {
+    throw new Error(`Error sending email: ${error}`);
+  }
 }
