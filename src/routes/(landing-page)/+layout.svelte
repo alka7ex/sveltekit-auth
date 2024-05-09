@@ -32,7 +32,7 @@
 <Toaster richColors />
 <div class="relative flex min-h-screen flex-col">
 	<Navigation {user} />
-	<div class="mt-8 md:mt-12 ">
+	<div class="mt-8 md:mt-12 mx-4">
 		<slot />
 	</div>
 	<Footer/>
